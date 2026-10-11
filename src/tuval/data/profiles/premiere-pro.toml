@@ -1,0 +1,24 @@
+schema = 1
+id = "premiere-pro"
+name = "Premiere Pro"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe Premiere Pro 20[0-9][0-9]/Adobe Premiere Pro.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+
+[status]
+tier = "bronze"
+verified_by_us = false
+tested_gpus = ["nvidia"]
+evidence = ["https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"]
+notes = "Core editing works on NVIDIA; CUDA acceleration is NVIDIA-only."
+
+[[known_issues]]
+summary = "Import and Export modes draw black; export through Media Encoder instead"
+source = "https://github.com/le-birnes/AdobeWine"
+
+[[known_issues]]
+summary = "The UI hung once after Home > New Project (1 of 4 runs)"
+source = "https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"

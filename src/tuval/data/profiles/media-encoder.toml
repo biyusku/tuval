@@ -1,0 +1,16 @@
+schema = 1
+id = "media-encoder"
+name = "Media Encoder"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe Media Encoder 20[0-9][0-9]/Adobe Media Encoder.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+
+[status]
+tier = "silver"
+verified_by_us = false
+tested_gpus = ["nvidia"]
+evidence = ["https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"]
+notes = "Core functions pass on NVIDIA; CUDA and NVENC encoding are NVIDIA-only."

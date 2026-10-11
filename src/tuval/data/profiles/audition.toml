@@ -1,0 +1,16 @@
+schema = 1
+id = "audition"
+name = "Audition"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe Audition 20[0-9][0-9]/Adobe Audition.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+
+[status]
+tier = "silver"
+verified_by_us = false
+tested_gpus = ["nvidia"]
+evidence = ["https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"]
+notes = "Core functions pass AdobeWine's checklist on NVIDIA."

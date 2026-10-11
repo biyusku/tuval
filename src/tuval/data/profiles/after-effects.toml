@@ -1,0 +1,16 @@
+schema = 1
+id = "after-effects"
+name = "After Effects"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe After Effects 20[0-9][0-9]/Support Files/AfterFX.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+
+[status]
+tier = "bronze"
+verified_by_us = false
+tested_gpus = ["nvidia"]
+evidence = ["https://github.com/le-birnes/AdobeWine"]
+notes = "Partial: renders since AdobeWine 0.2.2; its function inventory is not tested yet."

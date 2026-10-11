@@ -1,0 +1,33 @@
+schema = 1
+id = "photoshop"
+name = "Photoshop"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe Photoshop 20[0-9][0-9]/Photoshop.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+mime_types = ["image/vnd.adobe.photoshop"]
+
+[wine]
+# Applied per application (AppDefaults\Photoshop.exe), not prefix-wide.
+windows_version = "win10"
+
+[status]
+tier = "silver"
+verified_by_us = false
+tested_gpus = ["nvidia"]
+evidence = ["https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"]
+notes = "Core editing functions pass AdobeWine's checklist on NVIDIA."
+
+[[known_issues]]
+summary = "Must report Windows 10: the Windows 11 build number triggers a division by zero"
+source = "https://github.com/le-birnes/AdobeWine"
+
+[[known_issues]]
+summary = "Needs a font family named Segoe UI (e.g. built from Selawik), else the menu bar hangs"
+source = "https://github.com/le-birnes/AdobeWine"
+
+[[known_issues]]
+summary = "The Web Home panel stays blank"
+source = "https://github.com/le-birnes/AdobeWine"

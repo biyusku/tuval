@@ -1,0 +1,16 @@
+schema = 1
+id = "indesign"
+name = "InDesign"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe InDesign 20[0-9][0-9]/InDesign.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+
+[status]
+tier = "untested"
+verified_by_us = false
+tested_gpus = []
+evidence = ["https://github.com/le-birnes/AdobeWine"]
+notes = "Installs through Creative Cloud; no functional testing published yet."

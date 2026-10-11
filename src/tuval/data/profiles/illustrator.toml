@@ -1,0 +1,21 @@
+schema = 1
+id = "illustrator"
+name = "Illustrator"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe Illustrator 20[0-9][0-9]/Support Files/Contents/Windows/Illustrator.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+mime_types = ["application/illustrator"]
+
+[status]
+tier = "silver"
+verified_by_us = false
+tested_gpus = ["nvidia"]
+evidence = ["https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"]
+notes = "Core functions pass AdobeWine's checklist on NVIDIA."
+
+[[known_issues]]
+summary = "High memory use on 16 GB machines"
+source = "https://github.com/le-birnes/AdobeWine/issues/2"

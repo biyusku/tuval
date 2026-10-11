@@ -1,0 +1,69 @@
+# Creative Cloud desktop app. It installs and licenses every other app *inside its own
+# prefix*, so this profile is the base of the shared "creative-cloud" prefix and carries
+# the prefix-wide settings. Other profiles list it in `requires`.
+schema = 1
+id = "creative-cloud"
+name = "Creative Cloud"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "standalone-installer"
+exe = "Program Files/Adobe/Adobe Creative Cloud/ACC/Creative Cloud.exe"
+min_wine = "11.10"
+
+[wine]
+windows_version = "win11"
+winetricks = ["d3dcompiler_47", "corefonts", "tahoma"]
+
+[[wine.registry]]
+key = 'HKCU\Software\Wine\Drivers'
+name = "Graphics"
+type = "REG_SZ"
+data = "x11"
+why = "Use Wine's X11 driver (through XWayland on Wayland desktops), as AdobeWine does."
+
+[[wine.registry]]
+key = 'HKCU\Software\Wine\X11 Driver'
+name = "Decorated"
+type = "REG_SZ"
+data = "N"
+why = "Apps start maximised; a window-manager title bar forces a resize that leaves panels undrawn."
+
+[[wine.registry]]
+key = 'HKCU\Software\Wine\WineDbg'
+name = "ShowCrashDialog"
+type = "REG_DWORD"
+data = 0
+why = "Suppress Wine's crash dialog for background helper processes (AdobeWine default)."
+
+[[wine.registry]]
+key = 'HKCU\Software\Wine\AppDefaults\msedgewebview2.exe\DllOverrides'
+name = "dxgi"
+type = "REG_SZ"
+data = "builtin"
+why = "The WebView2-based UI renders through WineD3D instead of DXVK, as in AdobeWine."
+
+[[wine.registry]]
+key = 'HKCU\Software\Wine\AppDefaults\msedgewebview2.exe\DllOverrides'
+name = "d3d11"
+type = "REG_SZ"
+data = "builtin"
+why = "Pairs with the dxgi override above; both must use the same backend."
+
+[status]
+tier = "silver"
+verified_by_us = false
+tested_gpus = ["nvidia"]
+evidence = ["https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"]
+notes = "Sign-in, app install and launching apps work on AdobeWine with NVIDIA."
+
+[[known_issues]]
+summary = "The Apps tab can stay on its loading placeholder"
+source = "https://github.com/le-birnes/AdobeWine/blob/main/docs/STATUS.md"
+
+[[known_issues]]
+summary = "The window close button does not quit the app"
+source = "https://github.com/le-birnes/AdobeWine"
+
+[[known_issues]]
+summary = "Can hang after updating itself"
+source = "https://github.com/le-birnes/AdobeWine"

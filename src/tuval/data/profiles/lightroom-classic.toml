@@ -1,0 +1,18 @@
+schema = 1
+id = "lightroom-classic"
+name = "Lightroom Classic"
+vendor = "Adobe"
+prefix = "creative-cloud"
+installed_via = "creative-cloud"
+exe = "Program Files/Adobe/Adobe Lightroom Classic/Lightroom.exe"
+min_wine = "11.10"
+requires = ["creative-cloud"]
+
+[status]
+tier = "broken"
+verified_by_us = false
+tested_gpus = []
+evidence = ["https://appdb.winehq.org/objectManager.php?sClass=application&iId=5839"]
+notes = """\
+WineHQ AppDB rates Photoshop Lightroom "Garbage" and it is outside AdobeWine's current \
+scope. Use the virtual-machine fallback (planned) until someone reports otherwise."""
