@@ -30,7 +30,116 @@ reports honestly how well each app works.
 4. **Nothing hidden.** Every registry value a profile sets carries a `why`. Everything
    tuval does to a prefix is declared in a TOML file you can read.
 
-## What works today
+## Try it
+
+> `setup` has not yet been run end to end on a real machine, so expect rough edges.
+> Please [report what happens](#report-your-results). Right now that is the most useful
+> help there is.
+
+### What you need
+
+- A Linux desktop session: X11, or Wayland with XWayland. tuval does not run on Windows
+  or macOS.
+- `git` and Python ≥ 3.11.
+- [uv](https://docs.astral.sh/uv/), the Python project manager tuval uses. If you don't
+  have it yet:
+
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
+
+- A Wine runtime: [AdobeWine](https://github.com/le-birnes/AdobeWine) (recommended), or
+  Wine-Staging ≥ 11.10 from your distribution or [WineHQ](https://www.winehq.org/). See
+  [Runtimes](#runtimes) for where tuval looks for it.
+- `winetricks`. Most distributions package it under that name.
+- Your own Adobe account with a valid licence.
+
+### Get tuval
+
+```bash
+git clone https://github.com/biyusku/tuval.git && cd tuval
+```
+
+```bash
+uv sync
+```
+
+`uv sync` creates a private environment for tuval in the `.venv` folder. It installs
+nothing system-wide. Run every command below from the `tuval` folder, with `uv run` in
+front.
+
+### Set up Creative Cloud
+
+1. **Check the machine.** `doctor` looks at the platform, display session, GPU and
+   driver, Vulkan, winetricks, the Wine runtime and memory, and tells you what is
+   missing.
+
+   ```bash
+   uv run tuval doctor
+   ```
+
+2. **See the plan.** This lists every command setup would run, and every registry value
+   and environment variable it would set. It changes nothing.
+
+   ```bash
+   uv run tuval setup --dry-run
+   ```
+
+3. **Prepare the prefix.** A *prefix* is the folder where Wine keeps a Windows
+   environment: its own `C:` drive and registry. This step creates
+   `~/.local/share/tuval/prefixes/creative-cloud`, installs the Windows components the
+   profiles need, applies their settings, and then checks the result for licence
+   tampering.
+
+   ```bash
+   uv run tuval setup
+   ```
+
+4. **Download the installer** yourself, from Adobe:
+   <https://creativecloud.adobe.com/apps/download/creative-cloud>. tuval never downloads
+   vendor software.
+
+5. **Run the installer inside the prefix.** Use the path of the file you downloaded; its
+   name may differ from the example. Then follow Adobe's installer as you would on
+   Windows.
+
+   ```bash
+   uv run tuval setup --installer ~/Downloads/Creative_Cloud_Set-Up.exe
+   ```
+
+Setup can be run again; it updates the existing prefix. It refuses to start, and
+changes nothing, in any of these cases:
+
+- it finds licence tampering in the prefix, or a hosts file that blocks Adobe;
+- a profile breaks a compliance rule;
+- the installer is not an `.exe`, or is itself a licensing component.
+
+### What setup changes on your machine
+
+- It never needs `sudo` or root, and it never changes system files. It reads
+  `/etc/hosts` but does not write to it.
+- It creates the prefix under `~/.local/share/tuval/prefixes/`, or under
+  `$XDG_DATA_HOME/tuval/prefixes/` if that variable is set.
+- winetricks keeps the components it downloads in its own cache (`~/.cache/winetricks`).
+- Wine itself may add menu entries, icons and file associations under `~/.local/share`
+  for the programs an installer sets up.
+
+Deleting the prefix folder removes the Windows environment, including everything
+installed into it.
+
+### Report your results
+
+Open an issue at <https://github.com/biyusku/tuval/issues>, whether it worked or not.
+Please include:
+
+- your distribution, GPU and graphics driver;
+- the output of `uv run tuval doctor` and `uv run tuval setup --dry-run`;
+- if a step failed, the last lines it printed.
+
+The output contains paths inside your home folder, so it shows your user name. Replace
+the name if you prefer.
+
+## Commands
 
 ```bash
 tuval doctor                 # is this machine ready? (GPU, Vulkan, display, runtime, RAM)
@@ -43,27 +152,12 @@ tuval setup --dry-run        # show every step setup would take; changes nothing
 tuval setup [--installer FILE]   # prepare the Creative Cloud prefix, then run Adobe's installer
 ```
 
-`doctor`, `profiles list`, `audit` and `setup --dry-run` accept `--json`. Exit codes: `0`
-ok, `1` problems found, `2` usage error.
+From the `tuval` folder, put `uv run` in front of each command, or activate the
+environment once with `source .venv/bin/activate`. `doctor`, `profiles list`, `audit`
+and `setup --dry-run` accept `--json`. Exit codes: `0` ok, `1` problems found, `2` usage
+error.
 
-### Setting up Creative Cloud
-
-1. Check the machine: `tuval doctor`. Setup needs a runtime (below) and `winetricks`.
-2. See what setup would do: `tuval setup --dry-run`. Every command, every registry value
-   and every environment variable it sets is listed.
-3. Prepare the prefix: `tuval setup`. This creates `~/.local/share/tuval/prefixes/creative-cloud`,
-   installs the Windows components the profiles need, and applies their settings.
-4. Download the official installer yourself from
-   <https://creativecloud.adobe.com/apps/download/creative-cloud>. tuval never downloads
-   vendor software.
-5. Run it inside the prefix: `tuval setup --installer ~/Downloads/Creative_Cloud_Set-Up.exe`.
-
-Setup can be run again; it updates the existing prefix. It refuses to start, and
-changes nothing, if it finds licence tampering in the prefix or a hosts file that blocks
-Adobe, if a profile breaks a compliance rule, or if the installer is not an `.exe` or is
-itself a licensing component.
-
-### Runtimes
+## Runtimes
 
 tuval looks for a runtime in this order. The first usable one wins:
 
@@ -74,9 +168,10 @@ tuval looks for a runtime in this order. The first usable one wins:
 | 3     | adobewine | `$ADOBEWINE_HOME/runtime/bin/wine` (default `~/.local/share/adobewine/...`) |
 | 4     | system    | `wine` on `PATH`                                                            |
 
-Recommended: AdobeWine, or Wine-Staging ≥ 11.10.
+Recommended: AdobeWine, or Wine-Staging ≥ 11.10. To use a Wine that is somewhere else,
+point `TUVAL_WINE` at its `wine` binary.
 
-### App status (reported by others, not yet verified by tuval)
+## App status (reported by others, not yet verified by tuval)
 
 | App                  | Tier     |
 |----------------------|----------|
@@ -92,23 +187,6 @@ Recommended: AdobeWine, or Wine-Staging ≥ 11.10.
 
 Almost all public reports come from NVIDIA GPUs with the proprietary driver. Reports
 from AMD and Intel users are especially welcome.
-
-## Install (development)
-
-tuval needs Python ≥ 3.11 and has no runtime dependencies. With
-[uv](https://docs.astral.sh/uv/):
-
-```bash
-git clone https://github.com/biyusku/tuval.git && cd tuval
-```
-
-```bash
-uv sync
-```
-
-```bash
-uv run tuval doctor
-```
 
 ## Development
 
