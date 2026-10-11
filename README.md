@@ -50,9 +50,71 @@ reports honestly how well each app works.
 
 - A Wine runtime: [AdobeWine](https://github.com/le-birnes/AdobeWine) (recommended), or
   Wine-Staging ≥ 11.10 from your distribution or [WineHQ](https://www.winehq.org/). See
-  [Runtimes](#runtimes) for where tuval looks for it.
+  [Runtimes](#runtimes) for where tuval looks for it. On Ubuntu, follow
+  [Install Wine-Staging and winetricks on Ubuntu](#install-wine-staging-and-winetricks-on-ubuntu).
 - `winetricks`. Most distributions package it under that name.
 - Your own Adobe account with a valid licence.
+
+### Install Wine-Staging and winetricks on Ubuntu
+
+These steps use WineHQ's own packages. They have been checked against Ubuntu 26.04
+(`resolute`) and 25.10 (`questing`). The commands use `sudo` because they install system
+packages; tuval itself never does.
+
+1. **Check your Ubuntu version.**
+
+   ```bash
+   lsb_release -sc
+   ```
+
+   If it prints something other than `resolute` or `questing`, the steps may differ.
+   Check [WineHQ](https://www.winehq.org/) for your version first.
+
+2. **Add WineHQ's signing key.** apt uses it to check that the packages really come from
+   WineHQ.
+
+   ```bash
+   sudo mkdir -pm755 /etc/apt/keyrings
+   ```
+
+   ```bash
+   wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo gpg --dearmor -o /etc/apt/keyrings/winehq-archive.key -
+   ```
+
+3. **Add WineHQ's repository** for your Ubuntu version, then refresh the package list.
+   If the download fails with `404`, WineHQ has no packages for your version.
+
+   ```bash
+   sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/$(lsb_release -sc)/winehq-$(lsb_release -sc).sources
+   ```
+
+   ```bash
+   sudo apt update
+   ```
+
+4. **Install Wine-Staging.** It needs about 1.7 GB of disk space.
+
+   ```bash
+   sudo apt install --install-recommends winehq-staging
+   ```
+
+5. **Install winetricks, after Wine-Staging.** Ubuntu's winetricks package depends on
+   `wine`. Once `winehq-staging` is installed it satisfies that dependency, so apt does
+   not also pull in Ubuntu's older Wine.
+
+   ```bash
+   sudo apt install winetricks
+   ```
+
+6. **Check the result.**
+
+   ```bash
+   wine --version
+   ```
+
+   It should print a version such as `wine-11.19 (Staging)`; anything from 11.10 up
+   works. `winehq-staging` puts both `wine` and `wineserver` in `/usr/bin`, so tuval
+   finds it without extra settings.
 
 ### Get tuval
 
@@ -133,7 +195,8 @@ Open an issue at <https://github.com/biyusku/tuval/issues>, whether it worked or
 Please include:
 
 - your distribution, GPU and graphics driver;
-- the output of `uv run tuval doctor` and `uv run tuval setup --dry-run`;
+- the output of `wine --version`, `uv run tuval doctor` and `uv run tuval setup --dry-run`;
+- the last line of `uv run pytest -q`;
 - if a step failed, the last lines it printed.
 
 The output contains paths inside your home folder, so it shows your user name. Replace
